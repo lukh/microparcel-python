@@ -8,6 +8,84 @@ class Message(object):
         assert (data is None or isinstance(data, list))
         self.data = [0 for i in range(size)] if data is None else data
 
+
+    def get(self, offset, bitsize):
+        assert (bitsize <= 16)
+        assert (bitsize > 0)
+        assert ((offset+bitsize) <= 8*self.size)
+        
+        assert((bitsize <= 8) or ((bitsize > 8) and (offset & 0x3) == 0))
+
+
+        if bitsize <= 8:
+            # on one byte
+            if((offset & 0x7) + bitsize <= 8):
+                mask = (1<<bitsize) - 1
+                byte_idx = offset >> 3
+                byte_shift = offset & 0x7
+                return (self.data[byte_idx] >> byte_shift) & mask
+            else:
+                mask = (1<<bitsize) - 1
+                byte_idx = offset >> 3
+                byte_shift = offset & 0x7
+                mask_lsb = mask & ( (1 << (8 - byte_shift)) - 1)
+                mask_msb = mask >> (8 - byte_shift)
+
+                lsb_part = (self.data[byte_idx] >> byte_shift) & mask_lsb
+                msb_part = self.data[byte_idx+1] & mask_msb
+
+                return lsb_part | (msb_part << (8 - byte_shift))
+
+        else:
+            mask = (1<<bitsize) - 1
+            byte_idx = offset >> 3
+
+            return (self.data[byte_idx] & (mask&0xFF)) | ((self.data[byte_idx+1] & (mask>>8)) << 8)
+
+
+    def set(self, offset, bitsize, value):
+        assert (bitsize <= 16)
+        assert (bitsize > 0)
+        assert ((offset+bitsize) <= 8*self.size)
+        
+        assert((bitsize <= 8) or ((bitsize > 8) and (offset & 0x3) == 0))
+
+        if bitsize <= 8:
+            # on one byte
+            if((offset & 0x7) + bitsize <= 8):
+                mask = (1<<bitsize) - 1
+                byte_idx = offset >> 3
+                byte_shift = offset & 0x7
+                self.data[byte_idx] &= ~(mask << byte_shift)
+                self.data[byte_idx] |= (value & mask) << byte_shift
+                return
+
+            else:
+                mask = (1<<bitsize) - 1
+                byte_idx = offset >> 3
+                lsb_byte_shift = offset & 0x7
+                msb_byte_shift = 8 - lsb_byte_shift
+                mask_lsb = mask & ( (1 << msb_byte_shift) - 1)
+                mask_msb = mask >> msb_byte_shift
+
+                # lsb
+                self.data[byte_idx] &= ~( mask_lsb << lsb_byte_shift )
+                self.data[byte_idx] |= (value & mask_lsb) << lsb_byte_shift
+                # msb
+                self.data[byte_idx+1] &= ~mask_msb
+                self.data[byte_idx+1] |= (value >> msb_byte_shift) & mask_msb
+                return #lsb_part | (msb_part << (8 - byte_shift))
+
+        else:
+            mask = (1<<bitsize) - 1
+            byte_idx = offset >> 3
+
+            self.data[byte_idx] &= ~(mask & 0xFF)
+            self.data[byte_idx] |= (value & 0xFF)
+            
+            self.data[byte_idx+1] &= ~(mask >> 8)
+            self.data[byte_idx+1] |= (value >> 8)
+
     @property
     def size(self):
         return len(self.data)
