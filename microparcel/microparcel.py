@@ -101,6 +101,10 @@ class Frame(object):
     def size(self):
         return  self.message.size + 2
 
+    @property
+    def data(self):
+        return [self.SOF] + self.message.data + [self.checksum]
+
 
 def make_parser_cls(message_size):
     class Parser(object):
