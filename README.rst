@@ -3,11 +3,11 @@ microparcel
 ===========
 
 
-.. image:: https://img.shields.io/pypi/v/microparcel.svg
-        :target: https://pypi.python.org/pypi/microparcel
+.. image:: https://img.shields.io/pypi/v/microparcel-python.svg
+        :target: https://pypi.python.org/pypi/microparcel-python
 
-.. image:: https://img.shields.io/travis/lukh/microparcel.svg
-        :target: https://travis-ci.org/lukh/microparcel
+.. image:: https://img.shields.io/travis/lukh/microparcel-python.svg
+        :target: https://travis-ci.org/lukh/microparcel-python
 
 .. image:: https://readthedocs.org/projects/microparcel/badge/?version=latest
         :target: https://microparcel.readthedocs.io/en/latest/?badge=latest
