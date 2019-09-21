@@ -9,8 +9,8 @@ microparcel
 .. image:: https://img.shields.io/travis/lukh/microparcel-python.svg
         :target: https://travis-ci.org/lukh/microparcel-python
 
-.. image:: https://readthedocs.org/projects/microparcel/badge/?version=latest
-        :target: https://microparcel.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/microparcel-python/badge/?version=latest
+        :target: https://microparcel-python.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
@@ -20,7 +20,7 @@ Serialize and deserialize data from a buffer
 
 
 * Free software: MIT license
-* Documentation: https://microparcel.readthedocs.io.
+* Documentation: https://microparcel-python.readthedocs.io
 
 
 Features
