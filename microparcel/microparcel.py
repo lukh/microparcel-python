@@ -8,27 +8,25 @@ class Message(object):
         assert (data is None or isinstance(data, list))
         self.data = [0 for i in range(size)] if data is None else data
 
-
     def get(self, offset, bitsize):
         assert (bitsize <= 16)
         assert (bitsize > 0)
         assert ((offset+bitsize) <= 8*self.size)
-        
-        assert((bitsize <= 8) or ((bitsize > 8) and (offset & 0x3) == 0))
 
+        assert((bitsize <= 8) or ((bitsize > 8) and (offset & 0x3) == 0))
 
         if bitsize <= 8:
             # on one byte
             if((offset & 0x7) + bitsize <= 8):
-                mask = (1<<bitsize) - 1
+                mask = (1 << bitsize) - 1
                 byte_idx = offset >> 3
                 byte_shift = offset & 0x7
                 return (self.data[byte_idx] >> byte_shift) & mask
             else:
-                mask = (1<<bitsize) - 1
+                mask = (1 << bitsize) - 1
                 byte_idx = offset >> 3
                 byte_shift = offset & 0x7
-                mask_lsb = mask & ( (1 << (8 - byte_shift)) - 1)
+                mask_lsb = mask & ((1 << (8 - byte_shift)) - 1)
                 mask_msb = mask >> (8 - byte_shift)
 
                 lsb_part = (self.data[byte_idx] >> byte_shift) & mask_lsb
@@ -37,23 +35,24 @@ class Message(object):
                 return lsb_part | (msb_part << (8 - byte_shift))
 
         else:
-            mask = (1<<bitsize) - 1
+            mask = (1 << bitsize) - 1
             byte_idx = offset >> 3
 
-            return (self.data[byte_idx] & (mask&0xFF)) | ((self.data[byte_idx+1] & (mask>>8)) << 8)
-
+            part0 = self.data[byte_idx] & (mask & 0xFF)
+            part1 = (self.data[byte_idx + 1] & (mask >> 8)) << 8
+            return part0 | part1
 
     def set(self, offset, bitsize, value):
         assert (bitsize <= 16)
         assert (bitsize > 0)
         assert ((offset+bitsize) <= 8*self.size)
-        
+
         assert((bitsize <= 8) or ((bitsize > 8) and (offset & 0x3) == 0))
 
         if bitsize <= 8:
             # on one byte
             if((offset & 0x7) + bitsize <= 8):
-                mask = (1<<bitsize) - 1
+                mask = (1 << bitsize) - 1
                 byte_idx = offset >> 3
                 byte_shift = offset & 0x7
                 self.data[byte_idx] &= ~(mask << byte_shift)
@@ -61,28 +60,28 @@ class Message(object):
                 return
 
             else:
-                mask = (1<<bitsize) - 1
+                mask = (1 << bitsize) - 1
                 byte_idx = offset >> 3
                 lsb_byte_shift = offset & 0x7
                 msb_byte_shift = 8 - lsb_byte_shift
-                mask_lsb = mask & ( (1 << msb_byte_shift) - 1)
+                mask_lsb = mask & ((1 << msb_byte_shift) - 1)
                 mask_msb = mask >> msb_byte_shift
 
                 # lsb
-                self.data[byte_idx] &= ~( mask_lsb << lsb_byte_shift )
+                self.data[byte_idx] &= ~(mask_lsb << lsb_byte_shift)
                 self.data[byte_idx] |= (value & mask_lsb) << lsb_byte_shift
                 # msb
                 self.data[byte_idx+1] &= ~mask_msb
                 self.data[byte_idx+1] |= (value >> msb_byte_shift) & mask_msb
-                return #lsb_part | (msb_part << (8 - byte_shift))
+                return  # lsb_part | (msb_part << (8 - byte_shift))
 
         else:
-            mask = (1<<bitsize) - 1
+            mask = (1 << bitsize) - 1
             byte_idx = offset >> 3
 
             self.data[byte_idx] &= ~(mask & 0xFF)
             self.data[byte_idx] |= (value & 0xFF)
-            
+
             self.data[byte_idx+1] &= ~(mask >> 8)
             self.data[byte_idx+1] |= (value >> 8)
 
@@ -90,8 +89,10 @@ class Message(object):
     def size(self):
         return len(self.data)
 
+
 class Frame(object):
     kSOF = 0xAA
+
     def __init__(self):
         self.SOF = 0
         self.message = Message(0)
@@ -99,7 +100,7 @@ class Frame(object):
 
     @property
     def size(self):
-        return  self.message.size + 2
+        return self.message.size + 2
 
     @property
     def data(self):
@@ -110,6 +111,7 @@ def make_parser_cls(message_size):
     class Parser(object):
         MsgSize = message_size
         FrameSize = message_size + 2
+
         class Status(Enum):
             Complete = 0
             NotComplete = 1
@@ -133,7 +135,7 @@ def make_parser_cls(message_size):
 
         def parse(self, in_byte, out_msg):
             if self._state == self.State.Idle:
-                #when receiving a byte in idle, reset
+                # when receiving a byte in idle, reset
                 self._buffer = []
 
                 # valid start of frame
@@ -146,7 +148,6 @@ def make_parser_cls(message_size):
                 else:
                     self._status = self.Status.Error
 
-            
             else:
                 self._buffer.append(in_byte)
 
@@ -161,12 +162,10 @@ def make_parser_cls(message_size):
 
                     self._state = self.State.Idle
 
-
                 else:
                     self._status = self.Status.NotComplete
 
             return self._status
-
 
         def encode(self, in_msg):
             assert(in_msg.size == self.MsgSize)
@@ -177,7 +176,5 @@ def make_parser_cls(message_size):
             frame.checksum = (frame.SOF + sum(frame.message.data)) & 0xFF
 
             return frame
-
-
 
     return Parser
