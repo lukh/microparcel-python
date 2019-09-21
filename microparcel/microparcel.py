@@ -4,11 +4,21 @@ from enum import Enum
 
 
 class Message(object):
+    """
+        Encapsulates data byte
+        Provide bit access to the data via get/set.
+    """
     def __init__(self, size=0, data=None):
         assert (data is None or isinstance(data, list))
         self.data = [0 for i in range(size)] if data is None else data
 
     def get(self, offset, bitsize):
+        """
+            return value stored in the data array,
+            at address "offset", in bit.
+            :param offset: the position in the array
+            :param bitsize: the size of the data to return (1 to 16)
+        """
         assert (bitsize <= 16)
         assert (bitsize > 0)
         assert ((offset+bitsize) <= 8*self.size)
@@ -43,6 +53,12 @@ class Message(object):
             return part0 | part1
 
     def set(self, offset, bitsize, value):
+        """
+            Set a specific value in the data array, at offset.
+            :param offset: position in the data array, in bit.
+            :param bitsize: size of the data to set, in bit (1 to 16)
+            :param value: the value to set
+        """
         assert (bitsize <= 16)
         assert (bitsize > 0)
         assert ((offset+bitsize) <= 8*self.size)
@@ -91,6 +107,10 @@ class Message(object):
 
 
 class Frame(object):
+    """
+        Encapsulate a Message in a Frame,
+        between a Start Of Frame and a Checksum (8bits).
+    """
     kSOF = 0xAA
 
     def __init__(self):
@@ -108,7 +128,17 @@ class Frame(object):
 
 
 def make_parser_cls(message_size):
+    """
+        A Factory to generate a Parser handling Message
+        of message_size.
+    """
     class Parser(object):
+        """
+            Parses bytes to rebuild messages from byte stream.
+            And generates frames from messages.
+
+            Used for sending messages via network or serial line.
+        """
         MsgSize = message_size
         FrameSize = message_size + 2
 
@@ -127,13 +157,13 @@ def make_parser_cls(message_size):
 
             self._buffer = 0
 
-        def _isCheckSumValid(self):
-            if len(self._buffer) != self.FrameSize:
-                raise ValueError()
-
-            return (sum(self._buffer[0: -1]) & 0xFF) == self._buffer[-1]
-
         def parse(self, in_byte, out_msg):
+            """
+                takes a byte, parses it to rebuild a message.
+                :param in_byte: byte to parse.
+                :param out_message: reference of the message built.
+                :ret Status; Complete, NotComplete, Error.
+            """
             if self._state == self.State.Idle:
                 # when receiving a byte in idle, reset
                 self._buffer = []
@@ -168,6 +198,9 @@ def make_parser_cls(message_size):
             return self._status
 
         def encode(self, in_msg):
+            """
+                Encode a Message in a Frame, calculating the CheckSum
+            """
             assert(in_msg.size == self.MsgSize)
 
             frame = Frame()
@@ -176,5 +209,11 @@ def make_parser_cls(message_size):
             frame.checksum = (frame.SOF + sum(frame.message.data)) & 0xFF
 
             return frame
+
+        def _isCheckSumValid(self):
+            if len(self._buffer) != self.FrameSize:
+                raise ValueError()
+
+            return (sum(self._buffer[0: -1]) & 0xFF) == self._buffer[-1]
 
     return Parser
