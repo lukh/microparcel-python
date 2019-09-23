@@ -49,7 +49,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'microparcel'
+project = u'microparcel-python'
 copyright = u"2019, Vivien Henry"
 author = u"Vivien Henry"
 

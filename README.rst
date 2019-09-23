@@ -1,6 +1,6 @@
-===========
-microparcel
-===========
+==================
+microparcel-python
+==================
 
 
 .. image:: https://img.shields.io/pypi/v/microparcel-python.svg
@@ -15,18 +15,24 @@ microparcel
 
 
 
+Serialize and deserialize structured data.
 
-Serialize and deserialize data from a buffer
-
+microparcel impementation in Python.
 
 * Free software: MIT license
-* Documentation: https://microparcel-python.readthedocs.io
 
 
-Features
---------
+Provides three differents entities:
 
-* TODO
+A Message is the payload, with methods to access specifics bitfields on the data buffer
+
+The Frame encapsulates the Message between a Start Of Frame and a CheckSum
+
+And the Parser is used to Parse bytes into Message and encodes Messages in Frame
+
+See :ref:`usage` for more information
+
+
 
 Credits
 -------
