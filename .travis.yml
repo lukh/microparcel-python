@@ -12,7 +12,7 @@ deploy:
     secure: CojM1DOzZhr/+4XN9Qc5kAov7VHfMpYAKLaFNekkHtoD+AJzLflEpmoFOx/JDOKGKYOkzq9xbhFou3WsG+V9MFnlc5qWbywPKaO7PO3im35oEJg5eZEt2nMLx9bH1fMccNzWOuH0jmdD3C/ZSKP4fihEc/auanHMXKV3a6rt5cdIYbRa/X83ofMU89IVdgS0LS5Xf0dOu4GVJ2MFrVKAMZNvJUMTaamlC5RV+uc2EiJqCvbYHoMDPLAsmIFxWA2CSpbjTU6QQgXnA89PBOsEwjp3xDYUNEX2BtWeVcoEbDK2zLR0oYpCYxuTVbjvM17w22wWGGEZ2YxHKsgODupUEpm17Tr03P7UBgKA31prj/fLovGVm/GoHNsG0FDSUIZdJNqQ+/Ic8Ft9d3/PGn7+rfo8p/+f2O7GvbmsbHyPv8k2owVr6Dhar1rpV3S7/t1nGKG130hkFUE4I6aYybRx7mrzkIjaaCANo3fCSwkNBrp9UyDxoONjk8pSDnXkl7WkmEj2GpYOPRuShev7UOnc00xTdtLNHPhOHdlbWit/giRBv7TwpxFircRIMIhM6hPtj2FeP9Xrui1SKvLN3Avigl9+Ee6KzC+iIODvRrnTIc+T+OsW/JQ3K56vxD2K6DxNQNSxfF3/j+2OfaNoyfbOeG28g0ma7dPUCpUhTP5htwQ=
   on:
     tags: true
-    repo: lukh/microparcel
+    repo: lukh/microparcel-python
     python:
     - 3.6
     - 2.7
