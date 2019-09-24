@@ -30,8 +30,7 @@ The Frame encapsulates the Message between a Start Of Frame and a CheckSum
 
 And the Parser is used to Parse bytes into Message and encodes Messages in Frame
 
-.. include:: docs/usage.rst
-
+See Documentation: https://microparcel-python.readthedocs.io/en/latest/
 
 Credits
 -------

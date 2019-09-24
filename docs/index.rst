@@ -1,5 +1,5 @@
-Welcome to microparcel's documentation!
-======================================
+Welcome to microparcel's documentation !
+========================================
 
 .. toctree::
    :maxdepth: 2
@@ -8,7 +8,6 @@ Welcome to microparcel's documentation!
    readme
    installation
    usage
-   modules
    contributing
    authors
    history
